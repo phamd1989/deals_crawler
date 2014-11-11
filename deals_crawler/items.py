@@ -15,4 +15,3 @@ class DealsCrawlerItem(scrapy.Item):
     deal_url = scrapy.Field()
     company_name = scrapy.Field()
     company_deals = scrapy.Field()
-
