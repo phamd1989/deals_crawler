@@ -1,27 +1,33 @@
 __author__ = 'dung'
 
 from scrapy.spider import BaseSpider
-from scrapy.selector import HtmlXPathSelector
 from deals_crawler.items import DealsCrawlerItem
 
 class DmozSpider(BaseSpider):
     name = "dmoz"
     allowed_domains = ["dmoz.org"]
-    start_urls = [
-        "http://www.urbanspoon.com/n/21/2045/Philadelphia/University-City-restaurants",
-    ]
+    start_urls = ["http://www.offers.com/offers/in-store/"]
+
     def parse(self, response):
-       hxs = HtmlXPathSelector(response)
-       titles = hxs.select('//a[contains(@href, "/r")]')
-       addresses = hxs.select('//span[contains(@class,"address")]')
-       items = []
-       print 'SSDSDDS'
-       i = 0
-       while i<=14:
-          print i
-          item = DealsCrawlerItem()
-          item['name'] = titles[i].select('@title').extract()
-          item['address'] = addresses[i].select('text()').extract()
-          i = i + 1
-          items.append(item)
-       return items
+        types =  response.xpath("//div[@class='top-message']/text()")
+        images = response.xpath("//div[@class='offer-image']")
+        info = response.xpath("//div[@class='offer-info']")
+
+        # remember to add defensive code here
+        # by checking the minimum length among those 3
+
+        items = []
+        i = 0
+        while i<=29:
+            print i
+            item = DealsCrawlerItem()
+            item['type']          = types[i].extract()
+            item['image_url']     = images[i].xpath('a/img/@src').extract()
+            item['title']         = info[i].xpath('p/a/@title').extract()
+            item['company_name']  = info[i].xpath("div[@class='clearfix']/span/a/@title").extract()
+            item['company_deals'] = info[i].xpath("div[@class='clearfix']/span/a/@href").extract()
+            item['deal_url']      = info[i].xpath("div[@class='buy']/div[@class='buy-button button-outer  noncom']/@data-href")\
+                                           .extract()
+            i = i + 1
+            items.append(item)
+        return items

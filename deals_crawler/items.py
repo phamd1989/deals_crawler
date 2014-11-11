@@ -9,6 +9,10 @@ import scrapy
 
 
 class DealsCrawlerItem(scrapy.Item):
-    name = scrapy.Field()
-    address = scrapy.Field()
+    type = scrapy.Field()
+    image_url = scrapy.Field()
+    title = scrapy.Field()
+    deal_url = scrapy.Field()
+    company_name = scrapy.Field()
+    company_deals = scrapy.Field()
 
